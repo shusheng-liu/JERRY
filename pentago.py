@@ -1,12 +1,6 @@
 import numpy as np
 import random
 
-# check victory, apply move, check move, computer move, display board and menu
-
-game_board = np.zeros((6,6))
-print(game_board)
-
-
 def display_board(board):
     # implement your function here
     pass
@@ -50,7 +44,7 @@ def check_victory(board,turn,rot):
             continue
         elif result == 1:
             return 1
-        elif result == 2:
+        elif result == 2: 
             return 2
     
     #check if board is all filed up
@@ -78,12 +72,107 @@ def check_array_victory(row):
 
 def apply_move(board,turn,row,col,rot):
 
+    board_copy = board.copy()
+    board_copy[row][col] = turn
 
+    if (rot % 2 == 0):
+        #counter clockwise
+        return rotate_counter_clockwise(board_copy, rot)
+    else:
+        #clockwise
+        return rotate_clockwise(board_copy,rot)
 
+    
+def rotate_clockwise(board,rot):
+    temp = board.copy()    
 
-
-
+    if rot == 1:
+        top_row = temp[0][3:]
+        middle_row = temp[1][3:]
+        bottom_row = temp[2][3:]
+        
+        for i in range(0,3):
+            board[i][3] = bottom_row[i] 
+            board[i][4] = middle_row[i]
+            board[i][5] = top_row[i]
+        
+    elif rot == 3:
+        top_row = temp[3][3:]
+        middle_row = temp[4][3:]
+        bottom_row = temp[5][3:]
+        
+        for i in range(0,3):
+            board[i+3][3] = bottom_row[i] 
+            board[i+3][4] = middle_row[i]
+            board[i+3][5] = top_row[i]
+        
+    elif rot == 5:
+        top_row = temp[3][:3]
+        middle_row = temp[4][:3]
+        bottom_row = temp[5][:3]
+        
+        for i in range(0,3):
+            board[i+3][0] = bottom_row[i] 
+            board[i+3][1] = middle_row[i]
+            board[i+3][2] = top_row[i]
+        
+    else:
+        top_row = temp[0][:3]
+        middle_row = temp[1][:3]
+        bottom_row = temp[2][:3]
+        
+        for i in range(0,3):
+            board[i][0] = bottom_row[i] 
+            board[i][1] = middle_row[i]
+            board[i][2] = top_row[i]
+    
     return board
+    
+def rotate_counter_clockwise(board,rot):
+    temp = board.copy()    
+    
+    if rot == 2:
+        right_col = temp[:,5]
+        middle_col = temp[:,4]
+        left_col = temp[:,3]
+        
+        for i in range(0,3):
+            board[0][i+3] = right_col[i] 
+            board[1][i+3] = middle_col[i]
+            board[2][i+3] = left_col[i]
+        
+    elif rot == 4:
+        right_col = temp[:,5]
+        middle_col = temp[:,4]
+        left_col = temp[:,3]
+        
+        for i in range(3,6):
+            board[3][i] = right_col[i] 
+            board[4][i] = middle_col[i]
+            board[5][i] = left_col[i]
+        
+    elif rot == 6:
+        right_col = temp[:,2]
+        middle_col = temp[:,1]
+        left_col = temp[:,0]
+        
+        for i in range(0,3):
+            board[3][i] = right_col[i+3] 
+            board[4][i] = middle_col[i+3]
+            board[5][i] = left_col[i+3]
+        
+    else:
+        right_col = temp[:,2]
+        middle_col = temp[:,1]
+        left_col = temp[:,0]
+        
+        for i in range(0,3):
+            board[0][i] = right_col[i] 
+            board[1][i] = middle_col[i]
+            board[2][i] = left_col[i]
+            
+   
+    return board 
     
 def check_move(board,row,col):    
     # implement your function here
