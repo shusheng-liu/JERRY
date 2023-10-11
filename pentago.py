@@ -7,15 +7,27 @@ def display_board(board):
     
 def check_victory(board,turn,rot):
     
+    result = check_board_victory(board)
+    if result == 0:
+        board_copy = rotate(board,rot)
+        return check_board_victory(board_copy)
+    else:
+        return result    
+
+def check_board_victory(board):
+    
+    PLAYER_1_WIN = False
+    PLAYER_2_WIN = False
+    
     #check row by row
     for row in board:
         result = check_array_victory(row) 
         if result == 0:
             continue
         elif result == 1:
-            return 1
+            PLAYER_1_WIN = True
         elif result == 2:
-            return 2
+            PLAYER_2_WIN = True
         
     #check column by column
     for i in range (6):
@@ -23,9 +35,9 @@ def check_victory(board,turn,rot):
         if result == 0:
             continue
         elif result == 1:
-            return 1
+            PLAYER_1_WIN = True
         elif result == 2:
-            return 2
+            PLAYER_2_WIN = True
     
     #check diagonals 
     first_diagonal_ltr = [board[0][1], board[1][2], board[2][3], board[3][4], board[4][5]]
@@ -43,15 +55,21 @@ def check_victory(board,turn,rot):
         if result == 0:
             continue
         elif result == 1:
-            return 1
+            PLAYER_1_WIN = True
         elif result == 2: 
-            return 2
-    
-    #check if board is all filed up
-    if (0 not in board):
+            PLAYER_2_WIN = True
+            
+    if PLAYER_1_WIN and PLAYER_2_WIN:
         return 3
-    
-    return 0
+    elif (0 not in board):     #check if board is all filed up
+        return 3
+    elif PLAYER_1_WIN:
+        return 1
+    elif PLAYER_2_WIN:
+        return 2
+    else:
+        return 0
+            
 
 def check_array_victory(row):
     player1, player2 = 0,0
@@ -75,13 +93,15 @@ def apply_move(board,turn,row,col,rot):
     board_copy = board.copy()
     board_copy[row][col] = turn
 
+    return rotate(board_copy,rot)
+
+def rotate(board, rot):
     if (rot % 2 == 0):
         #counter clockwise
-        return rotate_counter_clockwise(board_copy, rot)
+        return rotate_counter_clockwise(board, rot)
     else:
         #clockwise
-        return rotate_clockwise(board_copy,rot)
-
+        return rotate_clockwise(board,rot)
     
 def rotate_clockwise(board,rot):
     temp = board.copy()    
