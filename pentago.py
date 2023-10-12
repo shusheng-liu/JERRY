@@ -2,8 +2,7 @@ import numpy as np
 import random
 
 def display_board(board):
-    # implement your function here
-    pass
+    print(board)
     
 def check_victory(board,turn,rot):
     
@@ -195,16 +194,132 @@ def rotate_counter_clockwise(board,rot):
     return board 
     
 def check_move(board,row,col):    
-    # implement your function here
-    return False
+    return (board[row][col] == 0)
 
 def computer_move(board,turn,level):
     # implement your function here
     return (0,0,0)
 
-def menu():  
-    # implement your function here
-    pass
 
-#if __name__ == "__main__":
-    #menu()=
+def random_computer_player(board, turn):
+    
+    
+    
+    
+    return (0,0,0)
+
+def menu():  
+    
+    main_menu()
+
+def main_menu():
+    print("")
+    print("------PENTAGO------")
+    print("Please enter your desired option")
+    print("(1) Play against another player")
+    print("(2) Play against easy level computer")
+    print("(3) Play against medium level computer")
+    print("(4) Quit the game.")
+    
+    valid_input = False
+    while not valid_input:
+        option = input(">")
+        try:
+            option = int(option)
+        except ValueError:
+            print("Please enter a number")
+
+        if (option > 4 or option < 1):
+            print("Please enter a valid number")
+        else:
+            valid_input = True
+            
+    match option:
+        case 1:
+            pvp()
+        case 4:
+            return
+        
+def pvp():
+    
+    game_over = False
+    
+    game_board = np.zeros((6,6))
+    print(game_board)
+    
+    while not game_over:
+        
+        print("")
+        print("  -------------------- Player One's Turn --------------------  ")
+        (row, column, rotation) = get_input(game_board)
+        game_board = apply_move(game_board, 1, row, column, rotation)
+        result = check_victory(game_board, 1, rotation)
+        
+        if (result != 0):
+            game_over = True
+            continue
+        else:
+            print("")
+            print(game_board)
+        
+        print("")
+        print("  -------------------- Player Two's Turn --------------------  ")
+        (row, column, rotation) = get_input(game_board)
+        game_board = apply_move(game_board, 2, row, column, rotation)
+        result = check_victory(game_board, 2, rotation)
+        
+        if (result != 0):
+            game_over = True
+        else:
+            print("")
+            print(game_board)
+    
+    print("")    
+    match result:
+        case 1:
+            print("-------------------- Player One Wins!! --------------------")
+        case 2:
+            print("-------------------- Player Two Wins!! --------------------") 
+        case 3:
+            print("-------------------- It's a Draw!! --------------------")   
+        
+    print(" >>> Sending you back to the main menu... ")
+    main_menu()
+    
+    
+def get_input(board):
+    
+    print("Please enter the row, column and rotation you'd like to play")
+    
+    valid_input = False
+    
+    while not valid_input:
+        try:
+            row = int(input("Row: "))
+            column = int(input("Column: "))
+            rotation = int(input("Rotation: "))
+        except ValueError:
+            print("Please enter a number for each of the inputs.")
+            continue
+    
+        if (row > 5 or row < 0):
+            print("Please enter a valid row from 0 to 5.")
+            continue
+        elif (column > 5 or column < 0):
+            print("Please enter a valid column from 0 to 5.")
+            continue
+        elif (rotation > 8 or rotation < 1):
+            print("Please enter a valid rotation from 1 to 8.")
+            continue
+        
+        valid_input = check_move(board, row, column)
+        
+        if not valid_input:
+            print("That is not a valid move, please enter again.")
+        
+    return(row,column,rotation)
+    
+    
+    
+if __name__ == "__main__":
+    menu()
