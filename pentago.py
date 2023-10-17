@@ -8,8 +8,9 @@ def check_victory(board,turn,rot):
     
     result = check_board_victory(board)
     if result == 0:
-        board_copy = rotate(board,rot)
-        return check_board_victory(board_copy)
+        board_copy = board.copy()
+        board_copy_rotated = rotate(board_copy,rot)
+        return check_board_victory(board_copy_rotated)
     else:
         return result    
 
@@ -69,7 +70,6 @@ def check_board_victory(board):
     else:
         return 0
             
-
 def check_array_victory(row):
     player1, player2 = 0,0
     for item in row:
@@ -197,16 +197,23 @@ def check_move(board,row,col):
     return (board[row][col] == 0)
 
 def computer_move(board,turn,level):
-    # implement your function here
-    return (0,0,0)
 
+    if level == 1:
+        return random_computer_player(board, turn)
+    else:
+        return (0,0,0)
 
 def random_computer_player(board, turn):
-    
-    
-    
-    
-    return (0,0,0)
+    possible_moves = []
+    for i in range(6):
+        for j in range(6):
+            if (board[i][j] == 0):
+                possible_moves.append((i,j))
+                
+    move = random.randint(0, len(possible_moves) - 1 )
+    rotation = random.randint(1,8)
+    (row, col) = possible_moves[move]
+    return (row,col,rotation)
 
 def menu():  
     
@@ -214,7 +221,7 @@ def menu():
 
 def main_menu():
     print("")
-    print("------PENTAGO------")
+    print("------------ PENTAGO ------------")
     print("Please enter your desired option")
     print("(1) Play against another player")
     print("(2) Play against easy level computer")
@@ -237,9 +244,64 @@ def main_menu():
     match option:
         case 1:
             pvp()
+        case 2:
+            pve(1)
+        case 3:
+            pve(2)   
         case 4:
             return
         
+def pve(level):
+    
+    game_over = False
+    
+    game_board = np.zeros((6,6))
+    print(game_board)
+    
+    while not game_over:
+        
+        print("")
+        print("  -------------------- Player's Turn --------------------  ")
+        (row, column, rotation) = get_input(game_board)
+        game_board = apply_move(game_board, 1, row, column, rotation)
+        result = check_victory(game_board, 1, rotation)
+        
+        if (result != 0):
+            game_over = True
+            continue
+        else:
+            print("")
+            print(game_board)
+        
+        print("")
+        print("  -------------------- CPU's Turn --------------------  ")
+        (row, column, rotation) = computer_move(game_board, 2, level)
+        print(f"\n CPU played row: {row}, column: {column}, rotation: {rotation}")
+        game_board = apply_move(game_board, 2, row, column, rotation)
+        result = check_victory(game_board, 2, rotation)
+        
+        if (result != 0):
+            game_over = True
+        else:
+            print("")
+            print(game_board)
+        
+        print("")
+        next_turn = input("Would you like to continue? (y/n) : ")
+        game_over = next_turn.lower() == "n"
+    
+    print("")    
+    match result:
+        case 1:
+            print("-------------------- Player Wins!! --------------------")
+        case 2:
+            print("-------------------- CPU Wins!! --------------------") 
+        case 3:
+            print("-------------------- It's a Draw!! --------------------")   
+        
+    input(" >>>        Press Enter to go back to the main menu        <<< ")
+    main_menu()   
+    
 def pvp():
     
     game_over = False
@@ -273,6 +335,10 @@ def pvp():
         else:
             print("")
             print(game_board)
+        
+        print("")
+        next_turn = input("Would you like to continue? (y/n) : ")
+        game_over = next_turn.lower() == "n"
     
     print("")    
     match result:
@@ -283,9 +349,8 @@ def pvp():
         case 3:
             print("-------------------- It's a Draw!! --------------------")   
         
-    print(" >>> Sending you back to the main menu... ")
-    main_menu()
-    
+    input(" >>>        Press Enter to go back to the main menu        <<< ")
+    main_menu()   
     
 def get_input(board):
     
@@ -318,8 +383,6 @@ def get_input(board):
             print("That is not a valid move, please enter again.")
         
     return(row,column,rotation)
-    
-    
     
 if __name__ == "__main__":
     menu()
