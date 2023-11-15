@@ -84,6 +84,9 @@ def check_array_victory(row):
             player1 = 0
             if player2 == 5:
                 return 2
+        
+        elif item == 0:
+            player1, player2 = 0,0
             
     return 0
 
@@ -201,7 +204,7 @@ def computer_move(board,turn,level):
     if level == 1:
         return random_computer_player(board, turn)
     else:
-        return (0,0,0)
+        return medium_computer_player(board, turn)
 
 def random_computer_player(board, turn):
     possible_moves = []
@@ -214,6 +217,113 @@ def random_computer_player(board, turn):
     rotation = random.randint(1,8)
     (row, col) = possible_moves[move]
     return (row,col,rotation)
+
+def medium_computer_player(board, turn):
+    
+    (x,y,z) = (total_possible_win(board))
+    if (x >= 0 and y >= 0 and z >= 1):
+        return (x,y,z)
+    else:
+        return random_computer_player(board,turn)
+
+def total_possible_win(board):
+
+    copy = board.copy()
+    # do for normal board
+    (x,y) = possible_win(copy)
+    if (x >= 0 and y >= 0):
+        return (x,y,1)
+    # do for all possible rotations
+    for i in range(1,9):
+        board_copy = board.copy()
+        board_copy_rotated = rotate(board_copy,i)
+        (x,y) = possible_win(board_copy_rotated)
+        if (x >= 0 and y >= 0):
+            return (x,y,i)
+        
+    return (-1,-1,-1)
+
+def possible_win(board):
+    
+    # check along each row
+    for i in range(6):
+        result = possible_row_victory(board[i,:])
+        if (result >= 0 ):
+            return (i,result)
+            
+    # check along each column
+    for i in range (6):
+        result = possible_row_victory(board[:,i])
+        if (result >= 0 ):
+            return (result,i)
+        
+    first_diagonal_ltr = [board[0][1], board[1][2], board[2][3], board[3][4], board[4][5]]
+    second_diagonal_ltr = [board[0][0], board[1][1], board[2][2], board[3][3], board[4][4], board[5][5]]
+    third_diagonal_ltr = [board[1][0], board[2][1], board[3][2], board[4][3], board[5][4]]
+    
+    first_diagonal_rtl = [board[0][4], board[1][3], board[2][2], board[3][1], board[4][0]]
+    second_diagonal_rtl = [board[0][5], board[1][4], board[2][3], board[3][2], board[4][1], board[5][0]]
+    third_diagonal_rtl = [board[1][5], board[2][4], board[3][3], board[4][2], board[5][1]]
+
+    diagonals = [first_diagonal_ltr, second_diagonal_ltr, third_diagonal_ltr, first_diagonal_rtl, second_diagonal_rtl, third_diagonal_rtl]
+
+    # check for each diagonal
+    for i in range(6):
+        result = possible_row_victory(diagonals[i])
+        if (result >= 0):
+            return get_diagonal_coordinate((i,result))
+            
+            
+    return(-1,-1)
+
+def get_diagonal_coordinate(input):
+    
+    dia_coord = [
+        [(0,1),(1,2),(2,3),(3,4),(4,5)],
+        [(0,0),(1,1),(2,2),(3,3),(4,4),(5,5)],
+        [(1,0),(2,1),(3,2),(4,3),(5,4)],
+        [(0,4),(1,3),(2,2),(3,1),(4,0)],
+        [(0,5),(1,4),(2,3),(3,2),(4,1),(5,0)],
+        [(1,5),(2,4),(3,3),(4,2),(5,1)]
+    ]
+    
+    (x,y) = input
+    
+    return dia_coord[x][y]
+
+
+def possible_row_victory(row):
+    
+    player1, player2 = 0,0
+    gap = False
+    gap_pos = -1
+    
+    for item in row:
+        if item == 1:
+            player1+=1
+            
+        elif item == 2:
+            player2+=1
+            
+        elif item == 0:
+            if gap:
+                # Scenario 1 : There is 1 or 2's in-between the two empty tiles -> update gap pos
+                if (gap_pos != player1+player2):
+                    gap_pos = player1+player2+1
+                # Scenario 2 : Consecutive 0's
+                elif (gap_pos == player1+player2):
+                    if (gap_pos == 0):
+                        gap_pos = 1
+                    else:
+                        return (-1)
+            else:
+                gap = True
+                gap_pos = player1+player2
+            
+        if ((player1 == 4 or player2 == 4) and gap):
+            return gap_pos
+
+    return -1
 
 def menu():  
     
@@ -241,6 +351,8 @@ def main_menu():
         else:
             valid_input = True
             
+            
+    # change to if else
     match option:
         case 1:
             pvp()
@@ -250,6 +362,7 @@ def main_menu():
             pve(2)   
         case 4:
             return
+        
         
 def pve(level):
     
