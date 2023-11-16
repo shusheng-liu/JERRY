@@ -239,10 +239,29 @@ def total_possible_win(board):
         board_copy_rotated = rotate(board_copy,i)
         (x,y) = possible_win(board_copy_rotated)
         if (x >= 0 and y >= 0):
+            (x,y) = pre_rotation_coords(board,i,(x,y))
             return (x,y,i)
         
     return (-1,-1,-1)
 
+def pre_rotation_coords(board,rot,coords):
+    
+    board_copy = board.copy()
+    
+    if (rot%2==0):
+        rot -= 1
+    else:
+        rot += 1
+    
+    (x,y) = coords
+    board_copy[x][y] = 3
+    board_copy = rotate(board_copy,rot)
+    
+    for i in range(6):
+        for j in range(6):
+            if (board_copy[i][j] == 3):
+                return (i,j)
+    
 def possible_win(board):
     
     # check along each row
