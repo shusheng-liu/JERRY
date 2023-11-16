@@ -310,7 +310,6 @@ def get_diagonal_coordinate(input):
     
     return dia_coord[x][y]
 
-
 def possible_row_victory(row):
     
     player1, player2 = 0,0
@@ -370,18 +369,14 @@ def main_menu():
         else:
             valid_input = True
             
-            
-    # change to if else
-    match option:
-        case 1:
+    if (option == 1):
             pvp()
-        case 2:
+    elif (option == 2):
             pve(1)
-        case 3:
+    elif (option == 3):
             pve(2)   
-        case 4:
+    else:
             return
-        
         
 def pve(level):
     
@@ -423,12 +418,11 @@ def pve(level):
         game_over = next_turn.lower() == "n"
     
     print("")    
-    match result:
-        case 1:
+    if (result == 1):
             print("-------------------- Player Wins!! --------------------")
-        case 2:
+    elif (result == 2):
             print("-------------------- CPU Wins!! --------------------") 
-        case 3:
+    elif (result == 3):
             print("-------------------- It's a Draw!! --------------------")   
         
     input(" >>>        Press Enter to go back to the main menu        <<< ")
@@ -473,12 +467,11 @@ def pvp():
         game_over = next_turn.lower() == "n"
     
     print("")    
-    match result:
-        case 1:
+    if (result == 1):
             print("-------------------- Player One Wins!! --------------------")
-        case 2:
+    elif (result ==2):
             print("-------------------- Player Two Wins!! --------------------") 
-        case 3:
+    elif (result == 3):
             print("-------------------- It's a Draw!! --------------------")   
         
     input(" >>>        Press Enter to go back to the main menu        <<< ")
